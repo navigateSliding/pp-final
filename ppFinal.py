@@ -4,8 +4,13 @@ file_list = ("products.txt", "suppliers.txt", "orders.txt")
 
 for files in file_list:
     if not os.path.exists(files):
-        with open(files, 'w'):
-            pass
+        with open(files, 'w') as f:
+            if files == "products.txt":
+                f.write("ID | Name | Qty | Description | Price")
+            if files == "suppliers.txt":
+                f.write("ID | Name | Contact")
+            if files == "orders.txt":
+                f.write("Name | Qty")
 
 def load_data(file_name):
     data = []
@@ -16,8 +21,8 @@ def load_data(file_name):
     return data
 
 def add_product(products): 
+    product_id = input('Enter your product id: ')
     product_name = input('Enter product name: ')
-    product_id = (input('Enter your product id: '))
     product_count = input('Enter how many product: ')
     product_description = input('Enter description of product: ')
     product_price = input('Enter product price (in MYR): ')
@@ -31,7 +36,7 @@ def add_product(products):
     print('Product is successfully added')
 
 
-def update_product_details(products):
+def update_product(products):
     product_id = input('Enter the product id : ')
     for product in products:
         if product[1] == product_id:
@@ -48,15 +53,15 @@ def update_product_details(products):
             print("product not found")
 
 def add_supplier(suppliers):
-  supplier_id = input("Enter supplier ID: ")
-  name = input("Enter supplier name: ")
-  contact = input("Enter supplier contact: ")
-  suppliers.append([supplier_id, name, contact])
-  with open('suppliers.txt', 'w') as file:
-    for supply in suppliers:
-        file.write(','.join(map(str, supply)) + '\n')
-  print("Suppliers successfully added!")
-  
+    supplier_id = input("Enter supplier ID: ")
+    name = input("Enter supplier name: ")
+    contact = input("Enter supplier contact: ")
+    suppliers.append([supplier_id, name, contact])
+    with open('suppliers.txt', 'w') as file:
+        for supply in suppliers:
+            file.write(','.join(map(str, supply)) + '\n')
+        print("Suppliers successfully added!")
+
 
 def place_order():
     user_order_name = input("What product to order?: ")
@@ -82,26 +87,30 @@ def view_inventory():
 
 def generate_reports():
     print("test")
-    
-products = load_data('products.txt')
-suppliers = load_data('suppliers.txt')
-orders = load_data('orders.txt')
-while True:
-    user_input = input("1. Add a new product \n"
-                        "2. Update product details \n"
-                        "3. Add a new supplier \n"
-                        "4. Place an order \n"
-                        "5. View inventory \n"
-                        "6. Generate reports \n"
-                        "7. Exit \n"
-                        "Enter Number : ")
 
-    match user_input:
-        case "1": add_product(products)
-        case "2": update_product_details(products)
-        case "3": add_supplier()
-        case "4": place_order()
-        case "5": view_inventory()   
-        case "6": generate_reports()
-        case "7": break
-        case _: print("Invalid option, pick something within the range of 1-7")
+def main():
+    products = load_data('products.txt')
+    suppliers = load_data('suppliers.txt')
+    orders = load_data('orders.txt')
+    while True:
+        user_input = input("1. Add a new product \n"
+                            "2. Update product details \n"
+                            "3. Add a new supplier \n"
+                            "4. Place an order \n"
+                            "5. View inventory \n"
+                            "6. Generate reports \n"
+                            "7. Exit \n"
+                            "Enter Number : ")
+
+        match user_input:
+            case "1": add_product(products)
+            case "2": update_product(products)
+            case "3": add_supplier()
+            case "4": place_order()
+            case "5": view_inventory()   
+            case "6": generate_reports()
+            case "7": break
+            case _: print("Invalid option, pick something within the range of 1-7")
+
+if __name__ == "__main__":
+    main()
