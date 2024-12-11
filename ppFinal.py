@@ -1,19 +1,21 @@
 import os
 
-file_list = ("products.txt", "suppliers.txt", "orders.txt")
+file_list = ["products.txt", "suppliers.txt", "orders.txt"]
 
-for files in file_list:
-    if not os.path.exists(files):
-        with open(files, 'w') as f:
-            if files == "products.txt":
-                f.write("ID | Name | Qty | Description | Price")
-            if files == "suppliers.txt":
-                f.write("ID | Name | Contact")
-            if files == "orders.txt":
-                f.write("Name | Qty")
+def environment_check():
+    for files in file_list:
+        if not os.path.exists(files):
+            with open(files, 'w') as f:
+                if files == "products.txt":
+                    f.write("ID | Name | Qty | Description | Price")
+                if files == "suppliers.txt":
+                    f.write("ID | Name | Contact")
+                if files == "orders.txt":
+                    f.write("Name | Qty")
 
 def load_data(file_name):
     data = []
+
     if os.path.exists(file_name):
         with open(file_name, 'r') as file:
             for line in file.readlines():    
@@ -23,9 +25,9 @@ def load_data(file_name):
 def add_product(products): 
     product_id = input('Enter your product id: ')
     product_name = input('Enter product name: ')
-    product_count = input('Enter how many product: ')
+    product_count = int(input('Enter how many product: '))
     product_description = input('Enter description of product: ')
-    product_price = input('Enter product price (in MYR): ')
+    product_price = float(input('Enter product price (in MYR): '))
     
     products.append([product_name, product_id, product_count, product_description, product_price])
     with open('products.txt', 'w') as file:
@@ -41,9 +43,9 @@ def update_product(products):
     for product in products:
         if product[1] == product_id:
             product[0] = input(f"Enter new name (current: {product[0]}): ")
-            product[2] =  input(f"Enter new count (current: {product[2]}): ")
+            product[2] =  int(input(f"Enter new count (current: {product[2]}): "))
             product[3] = input(f"Enter new description (current: {product[3]}): ")
-            product[4] = input(f"Enter new price (current: {product[4]}): ")
+            product[4] = float(input(f"Enter new price (current: {product[4]}): "))
             with open('products.txt', 'w') as file:
                 for item in products:
                     file.write(','.join(item) + '\n')
@@ -56,6 +58,7 @@ def add_supplier(suppliers):
     supplier_id = input("Enter supplier ID: ")
     name = input("Enter supplier name: ")
     contact = input("Enter supplier contact: ")
+
     suppliers.append([supplier_id, name, contact])
     with open('suppliers.txt', 'w') as file:
         for supply in suppliers:
@@ -65,7 +68,7 @@ def add_supplier(suppliers):
 
 def place_order():
     user_order_name = input("What product to order?: ")
-    user_order_count = input("How much of that product to order?: ")
+    user_order_count = int(input("How much of that product to order?: "))
 
     orders = open("orders.txt", "a")
     orders.write(user_order_name + ": " + user_order_count + "\n")
@@ -92,6 +95,7 @@ def main():
     products = load_data('products.txt')
     suppliers = load_data('suppliers.txt')
     orders = load_data('orders.txt')
+
     while True:
         user_input = input("1. Add a new product \n"
                             "2. Update product details \n"
