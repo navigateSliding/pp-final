@@ -7,23 +7,22 @@ def duplicate_check(input_id, data_content):
             return True
     return False
 
-def format_header(file_name):
+def format_file_header(file_name):
+    headers = {
+        "products.txt": "Product ID | Name | Qty | Description | Price",
+        "suppliers.txt": "Supplier ID | Name | Contact",
+        "orders.txt": "Order ID | Product Name | Qty | Clients"
+    }
+
     with open(file_name, 'r') as f:
-        first_line = (f.readline()).strip()
+        first_line = f.readline().strip()
 
-    if first_line == "ID | Name | Qty | Description | Price" or first_line == "ID | Name | Contact" or first_line == "Name | Qty":
+    if first_line == headers[file_name]:
         return first_line
-    else:
-        with open(file_name, 'r+') as f:
-            original_content = f.read()
-            f.seek(0)
-
-            if file_name == "products.txt":
-                f.write("ID | Name | Qty | Description | Price" + "\n" + original_content)
-            if file_name == "suppliers.txt":
-                f.write("ID | Name | Contact" + "\n" + original_content)
-            if file_name == "orders.txt":
-                f.write("Order ID | Product Name | Qty | Clients" + "\n" + original_content)
+    with open(file_name, 'r+') as f:
+        original_content = f.read()
+        f.seek(0)
+        f.write(headers[file_name] + "\n" + original_content)
 
 def load_data(file_name): #udah
     data = []
@@ -36,12 +35,12 @@ def load_data(file_name): #udah
         with open(file_name, 'w'):
             pass
         
-    format_header(file_name)
+    format_file_header(file_name)
 
     return data 
 
 def save_data(file_name, data_content):
-    header = format_header(file_name)
+    header = format_file_header(file_name)
 
     with open(file_name, 'w') as file:
         file.write(header + '\n')
@@ -73,7 +72,7 @@ def add_product(products): #udah
 
 
 def update_product(products):   #udah 
-    product_id = input('Enter the product id : ').upper()
+    product_id = input('Enter the product ID : ').upper()
     for product in products:
         if product[0] == product_id:
             try:
@@ -103,9 +102,8 @@ def add_supplier(suppliers): #belom cek
         save_data("suppliers.txt", suppliers)
         print("Suppliers successfully added!")
 
-
 def place_order(products, orders):
-    os.system('cls')
+    os.system('cls' if os.name == 'nt' else 'clear')
     print("\n -- ORDERING PRODUCT -- \n")       #title
     
     no = 0      #an ordinary number (used in showing the products)
@@ -148,8 +146,8 @@ def place_order(products, orders):
                         if order_quantity <= int(product[2]) :                  
                             orders.append([f"{no1:04d}",product[1],order_quantity, order_customer])     # dd the data to the orders list
                             product[2] = int(product[2])- order_quantity        #reduce the product
-                            save_data("orders", orders)                         #save data orders
-                            save_data("products", products)                     #save data products
+                            save_data("orders.txt", orders)                         #save data orders
+                            save_data("products.txt", products)                     #save data products
                             print(f"\nDetails :\nID = {no1:04d} | Product = {product[1]} | Order = {order_quantity} | Client = {order_customer}\n\nOrders added successfully!\n")    # show the orders which made
                             time.sleep(3)
                             return
