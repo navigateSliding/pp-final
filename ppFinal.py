@@ -1,22 +1,24 @@
 import os
 import time
 
-# clearing the console screen and display formatted “title”, providing a header for the program
+# clear the console and display the menu header
 def print_title(title):
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"\n -- {title} -- \n")
 
 # handle data duplication 
-def duplicate_check(input_data, data_content):
-    # loop will be broken if the data is “False” indicating there is no duplicates found
+def duplicate_check(input_prompt, data_content):
+    # loop will be broken when the ID does not exist in database
     while True:
-        data_to_check = input(f"{input_data}").upper()
+        user_input = input(f"{input_prompt}").upper()
 
         for data_list in data_content:
-            if data_list[0] == data_to_check:
+            if data_list[0] == user_input:
                 print("The ID already exist on the database")
             else:
-                return data_to_check
+                return user_input
+        else:
+            return user_input
 
 # display expected headers for each file type
 def format_file_header(file_name):
@@ -26,14 +28,15 @@ def format_file_header(file_name):
         "orders.txt": "Order ID | Product Name | Qty | Clients"
     }
 
-    # open file in read mode and store the first line of the file to a variable
+    # store the first line to a variable
     with open(file_name, 'r') as file:
         first_line = file.readline().strip()
 
-    # if first line matches it will return, but if the first line not matches, modify the file to include correct header while maintaining the original file content
+    # if first line does match, return first_line values
     if first_line == headers[file_name]:
         return first_line
 
+    # if not, append first_line as a header for the file
     with open(file_name, 'r+') as file:
         original_content = file.read()
         file.seek(0)
@@ -45,13 +48,13 @@ def load_data(file_name):
 
     # check the file exists
     if os.path.exists(file_name):
-        # if yes, it will open the file in read mode and read all data, skipping the first line (header). Strip white space in each line, split it by commas and append it to data list
+        # read the data of the file starting from line 2. Strip white space and split new line with commas to append it to data list
         with open(file_name, 'r') as file:
             lines = file.readlines()[1:]
             data = [line.strip().split(',') for line in lines]
 
     elif not os.path.exists(file_name):
-        # if no, create empty file with specified name and correct header
+        # create an empty file with specified file name
         with open(file_name, 'w'):
             pass
 
@@ -76,8 +79,8 @@ def add_product(products_data):
     print_title("ADDING PRODUCT")
 
     try:
-        product_id = duplicate_check('Enter your product is: ', products_data)
         # prompts the user to input the product details
+        product_id = duplicate_check('Enter your product id: ', products_data)
         product_name = input('Enter product name: ')
         product_count = int(input('Enter how many product: '))
         product_description = input('Enter description of product: ')
@@ -106,7 +109,7 @@ def update_product(products_data):
         item_number += 1
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
-    # loop will be broken if product id entered existed
+    # Check if the ID exist or not
     product_id = input('\nEnter the product ID : ').upper()
     for product in products_data:
         if product[0] == product_id:
@@ -125,6 +128,7 @@ def update_product(products_data):
                 save_data("products.txt", products_data) # save data
                 print("Product updated successfully!")
                 return
+            
     else:
         print("Product not found")
 
@@ -148,7 +152,7 @@ def add_supplier(suppliers_data):
 
 
 def place_order(products_data, orders_data):
-    print_title("ORDERING PRODUCT")  # title
+    print_title("ORDERING PRODUCT")
 
     item_number = 0  # an ordinary number (used in showing the products)
     order_id = 0  # automatic id in order list
@@ -308,17 +312,16 @@ def generate_reports(products_data, orders_data):
         case _:
             print("Invalid option, pick something within the range of 1-2")
 
-# start an infinite loop until the user exits
 def main():
+    # start an infinite loop until the user exits
     while True:
         print_title("Main Menu")
 
-        # load data
+        # load data from file
         products_data = load_data('products.txt')
         suppliers_data = load_data('suppliers.txt')
         orders_data = load_data('orders.txt')
         
-        # display menu options and prompts the user for input  
         print("1. Add a new product \n"
               "2. Update product details \n"
               "3. Add a new supplier \n"
@@ -328,7 +331,6 @@ def main():
               "7. Exit \n")
         user_input = input("Enter Number: ")
 
-        # match the user input to corresponding function, if user calls 1 then add_product will be executed
         match user_input:
             case "1": add_product(products_data)
             case "2": update_product(products_data)
