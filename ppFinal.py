@@ -1,45 +1,53 @@
 import os
 import time
 
-
-def print_title(title):  # udah
+# clearing the console screen and display formatted “title”, providing a header for the program
+def print_title(title):
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"\n -- {title} -- \n")
 
-
-def duplicate_check(data_to_check, data_content):  # udah
+# handle data duplication 
+def duplicate_check(data_to_check, data_content):
+    # loop will be broken if the data is “False” indicating that no duplicates is found
     for data_list in data_content:
         if data_list[0] == data_to_check:
             return True
     return False
 
-
-def format_file_header(file_name):  # udah
+# display expected headers for each file type
+def format_file_header(file_name):
     headers = {
         "products.txt": "Product ID | Product Name | Qty | Description | Price (MYR)",
         "suppliers.txt": "Supplier ID | Name | Contact",
         "orders.txt": "Order ID | Product Name | Qty | Clients"
     }
 
+    # open file in read mode and store the first line of the file to a variable
     with open(file_name, 'r') as file:
         first_line = file.readline().strip()
 
+    # if first line matches it will return, but if the first line not matches, modify the file to include correct header while maintaining the original file content
     if first_line == headers[file_name]:
         return first_line
+
     with open(file_name, 'r+') as file:
         original_content = file.read()
         file.seek(0)
         file.write(headers[file_name] + "\n" + original_content)
 
-
-def load_data(file_name):  # udah
+# load data from the file
+def load_data(file_name):
     data = []
 
+    # check the file exists
     if os.path.exists(file_name):
+        # if yes, it will open the file in read mode and read all data, skipping the first line (header). Strip white space in each line, split it by commas and append it to data list
         with open(file_name, 'r') as file:
             for line in file.readlines()[1:]:
                 data.append(line.strip().split(','))
+
     elif not os.path.exists(file_name):
+        # if no, create empty file with specified name and correct header
         with open(file_name, 'w'):
             pass
 
@@ -47,49 +55,61 @@ def load_data(file_name):  # udah
 
     return data
 
-
-def save_data(file_name, data_content):  # udah
+# save data to the file
+def save_data(file_name, data_content):
+    # check the file header is correct
     file_header = format_file_header(file_name)
 
+    # overwrite its contents, write the header as the first line
     with open(file_name, 'w') as file:
         file.write(file_header + '\n')
+        # iterate through each item in the data_content list
         for data in data_content:
             file.write(','.join([str(item) for item in data]) + '\n')
 
-
-def add_product(products_data):  # udah
+# add a new product
+def add_product(products_data):
     print_title("ADDING PRODUCT")
 
     try:
+        # loop will be broken if unique product id is entered
         while 1:
             product_id = input('Enter your product id: ').upper()
+            # duplicate check
             if duplicate_check(product_id, products_data):
                 print("The ID already exist on the database")
             else:
                 break
+        # prompts the user to input the product details
         product_name = input('Enter product name: ')
         product_count = int(input('Enter how many product: '))
         product_description = input('Enter description of product: ')
         product_price = float(input('Enter product price (in MYR): '))
+
+    # displays error message if the user enters invalid data type
     except ValueError:
-        print("Wrong Value Type")
+        print("Wrong Value Type")    
+
+    # executes if no exception is triggered in the “try” block 
     else:
         products_data.append([product_id, product_name, product_count, product_description, product_price])
-        save_data("products.txt", products_data)
+        save_data("products.txt", products_data) # save data
 
         print(f'Number of product added: {len(products_data)}')
         print('Product is successfully added')
 
-
-def update_product(products_data):  # udah
+# update product details
+def update_product(products_data):
     print_title("UPDATE PRODUCT")
     item_number = 0
 
-    print("Product ID | Product Name | Qty | Description | Price (MYR)")
-    for product in products_data:
+    print ("Product ID | Product Name | Qty | Description | Price (MYR)")
+    # iterate through the list of products and display each product added with details
+    for product in products_data:  
         item_number += 1
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
+    # loop will be broken if product id entered existed
     product_id = input('\nEnter the product ID : ').upper()
     for product in products_data:
         if product[0] == product_id:
@@ -98,21 +118,25 @@ def update_product(products_data):  # udah
                 product[2] = int(input(f"Enter new Qty (current: {product[2]}): "))
                 product[3] = input(f"Enter new Description (current: {product[3]}): ")
                 product[4] = float(input(f"Enter new price (current: {product[4]}): "))
+
+            # display error message if user enters invalid data type
             except ValueError:
                 print("Wrong Value Type")
                 return
-            else:
-                save_data("products.txt", products_data)
+
+            else: 
+                save_data("products.txt", products_data) # save data
                 print("Product updated successfully!")
                 return
     else:
         print("Product not found")
 
-
-def add_supplier(suppliers_data):  # udah
+# add a new suppliers
+def add_supplier(suppliers_data):
     print_title("ADDING SUPPLIER")
 
     try:
+        # loop will be broken if user enters unique supplier id
         while 1:
             supplier_id = input("Enter supplier ID: ").upper()
             if duplicate_check(supplier_id, suppliers_data):
@@ -121,11 +145,14 @@ def add_supplier(suppliers_data):  # udah
                 break
         name = input("Enter supplier name: ")
         contact = int(input("Enter supplier contact number: "))
+
+    # display error message if user enters invalid data type
     except ValueError:
         print("Wrong Value Type")
+
     else:
         suppliers_data.append([supplier_id, name, contact])
-        save_data("suppliers.txt", suppliers_data)
+        save_data("suppliers.txt", suppliers_data) # save data
         print("Suppliers successfully added!")
 
 
@@ -244,21 +271,23 @@ def place_order(products_data, orders_data):
             time.sleep(2)
             return
 
-
+# view inventory
 def view_inventory(products_data):
     print_title("VIEW INVENTORY")
     item_number = 0
 
     print("Product ID | Qty | Price | Description | Price (MYR)")
+
+    # iterate through the list of products and display each product added with details
     for product in products_data:
         item_number += 1
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
+    # loop to ask user if they want to go back to main menu, loop will be broken if the user enters “y”
     while 1:
         go_back = input("Do you want to go back? (y/n): ").lower()
         if go_back == 'y':
             break
-
 
 def generate_reports(products_data, orders_data):
     def low_stock_report(products_data):
@@ -300,15 +329,17 @@ def generate_reports(products_data, orders_data):
         if go_back == 'y':
             break
 
-
+# start an infinite loop until the user exits
 def main():
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
 
+        # load data
         products_data = load_data('products.txt')
         suppliers_data = load_data('suppliers.txt')
         orders_data = load_data('orders.txt')
-
+        
+        # display menu options and prompts the user for input  
         user_input = input("1. Add a new product \n"
                            "2. Update product details \n"
                            "3. Add a new supplier \n"
@@ -318,24 +349,16 @@ def main():
                            "7. Exit \n"
                            "Enter Number: ")
 
+        # match the user input to corresponding function, if user calls 1 then add_product will be executed
         match user_input:
-            case "1":
-                add_product(products_data)
-            case "2":
-                update_product(products_data)
-            case "3":
-                add_supplier(suppliers_data)
-            case "4":
-                place_order(products_data, orders_data)
-            case "5":
-                view_inventory(products_data)
-            case "6":
-                generate_reports(products_data, orders_data)
-            case "7":
-                break
-            case _:
-                print("Invalid option, pick something within the range of 1-7")
-
+            case "1": add_product(products_data)
+            case "2": update_product(products_data)
+            case "3": add_supplier(suppliers_data)
+            case "4": place_order(products_data, orders_data)
+            case "5": view_inventory(products_data)   
+            case "6": generate_reports(products_data, orders_data)
+            case "7": break # terminate the program
+            case _: print("Invalid option, pick something within the range of 1-7") # if the user enters invalid option, display error message
 
 if __name__ == "__main__":
     main()
