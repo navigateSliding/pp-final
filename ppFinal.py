@@ -7,12 +7,16 @@ def print_title(title):
     print(f"\n -- {title} -- \n")
 
 # handle data duplication 
-def duplicate_check(data_to_check, data_content):
-    # loop will be broken if the data is “False” indicating that no duplicates is found
-    for data_list in data_content:
-        if data_list[0] == data_to_check:
-            return True
-    return False
+def duplicate_check(input_data, data_content):
+    # loop will be broken if the data is “False” indicating there is no duplicates found
+    while True:
+        data_to_check = input(f"{input_data}").upper()
+
+        for data_list in data_content:
+            if data_list[0] == data_to_check:
+                print("The ID already exist on the database")
+            else:
+                return data_to_check
 
 # display expected headers for each file type
 def format_file_header(file_name):
@@ -43,8 +47,8 @@ def load_data(file_name):
     if os.path.exists(file_name):
         # if yes, it will open the file in read mode and read all data, skipping the first line (header). Strip white space in each line, split it by commas and append it to data list
         with open(file_name, 'r') as file:
-            for line in file.readlines()[1:]:
-                data.append(line.strip().split(','))
+            lines = file.readlines()[1:]
+            data = [line.strip().split(',') for line in lines]
 
     elif not os.path.exists(file_name):
         # if no, create empty file with specified name and correct header
@@ -72,14 +76,7 @@ def add_product(products_data):
     print_title("ADDING PRODUCT")
 
     try:
-        # loop will be broken if unique product id is entered
-        while 1:
-            product_id = input('Enter your product id: ').upper()
-            # duplicate check
-            if duplicate_check(product_id, products_data):
-                print("The ID already exist on the database")
-            else:
-                break
+        product_id = duplicate_check('Enter your product is: ', products_data)
         # prompts the user to input the product details
         product_name = input('Enter product name: ')
         product_count = int(input('Enter how many product: '))
@@ -136,13 +133,7 @@ def add_supplier(suppliers_data):
     print_title("ADDING SUPPLIER")
 
     try:
-        # loop will be broken if user enters unique supplier id
-        while 1:
-            supplier_id = input("Enter supplier ID: ").upper()
-            if duplicate_check(supplier_id, suppliers_data):
-                print("The ID already exist on the database")
-            else:
-                break
+        supplier_id = duplicate_check("Enter supplier ID: ", suppliers_data)
         name = input("Enter supplier name: ")
         contact = int(input("Enter supplier contact number: "))
 
@@ -170,16 +161,14 @@ def place_order(products_data, orders_data):
         print("Sorry, we don't have any product right now")
         time.sleep(3)
 
-
     else:  # if there is
         # show the available products
         print("Product Available currently: \n")
-        print("Product ID | Product Name | Qty | Description")
+        print("Product ID | Product Name | Qty | Description | Price (MYR)")
         for product in products_data:
             item_number += 1
-            print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}")
-        ask_user = input(
-            "\nWhich way do you prefer to order the products (ID/Name): ").upper()  # ask the user to choose id or name
+            print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
+        ask_user = input("\nWhich way do you prefer to order the products (ID/Name): ").upper()  # ask the user to choose id or name
 
         # IF THE USER CHOSE ID
         if ask_user == 'ID':
@@ -193,7 +182,7 @@ def place_order(products_data, orders_data):
                     try:
                         order_id += 1  # setting the order id
                         order_customer = input("\nInput the client name: ")
-                        order_quantity = int(input(f"How much products do you order (available[{product[2]}]): "))
+                        order_quantity = int(input(f"How many products would you like to order (Available: {product[2]}): "))
 
                         # to test if the products quantity meet the user's order
                         if order_quantity <= int(product[2]):
@@ -283,13 +272,9 @@ def view_inventory(products_data):
         item_number += 1
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
-    # loop to ask user if they want to go back to main menu, loop will be broken if the user enters “y”
-    while 1:
-        go_back = input("Do you want to go back? (y/n): ").lower()
-        if go_back == 'y':
-            break
-
 def generate_reports(products_data, orders_data):
+    print_title("GENERATE REPORTS")
+
     def low_stock_report(products_data):
         print_title("LOW STOCK REPORT")
         item_number = 0
@@ -311,10 +296,10 @@ def generate_reports(products_data, orders_data):
                     print(
                         f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
 
-    print_title("GENERATE REPORTS")
     print("1. Low Stock\n"
           "2. Product Sales")
     report_type = input("Pick the report you want: ")
+
     match report_type:
         case "1":
             low_stock_report(products_data)
@@ -322,17 +307,11 @@ def generate_reports(products_data, orders_data):
             product_sales_report(products_data, orders_data)
         case _:
             print("Invalid option, pick something within the range of 1-2")
-            time.sleep(2)
-            return
-    while 1:
-        go_back = input("Do you want to go back? (y/n): ").lower()
-        if go_back == 'y':
-            break
 
 # start an infinite loop until the user exits
 def main():
     while True:
-        os.system('cls' if os.name == 'nt' else 'clear')
+        print_title("Main Menu")
 
         # load data
         products_data = load_data('products.txt')
@@ -340,14 +319,14 @@ def main():
         orders_data = load_data('orders.txt')
         
         # display menu options and prompts the user for input  
-        user_input = input("1. Add a new product \n"
-                           "2. Update product details \n"
-                           "3. Add a new supplier \n"
-                           "4. Place an order \n"
-                           "5. View inventory \n"
-                           "6. Generate reports \n"
-                           "7. Exit \n"
-                           "Enter Number: ")
+        print("1. Add a new product \n"
+              "2. Update product details \n"
+              "3. Add a new supplier \n"
+              "4. Place an order \n"
+              "5. View inventory \n"
+              "6. Generate reports \n"
+              "7. Exit \n")
+        user_input = input("Enter Number: ")
 
         # match the user input to corresponding function, if user calls 1 then add_product will be executed
         match user_input:
@@ -359,6 +338,8 @@ def main():
             case "6": generate_reports(products_data, orders_data)
             case "7": break # terminate the program
             case _: print("Invalid option, pick something within the range of 1-7") # if the user enters invalid option, display error message
+
+        input("\nPress enter to continue... ") # Pause the program so the user can see logs of the function
 
 if __name__ == "__main__":
     main()
