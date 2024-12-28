@@ -1,5 +1,6 @@
 import os
 
+
 def print_title(title: str):
     """
     Clear the console then display the menu header
@@ -7,6 +8,7 @@ def print_title(title: str):
 
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"\n -- {title} -- \n")
+
 
 def duplicate_check(input_prompt: str, data_content) -> str:
     """
@@ -21,9 +23,10 @@ def duplicate_check(input_prompt: str, data_content) -> str:
             if data_list[0] == user_input:
                 print("The ID already exist on the database")
                 break
-        
+
         else:
             return user_input
+
 
 def format_file_header(file_name):
     """
@@ -50,6 +53,7 @@ def format_file_header(file_name):
         file.seek(0)
         file.write(headers[file_name] + "\n" + original_content)
 
+
 def load_data(file_name):
     """
     Load data from the file
@@ -73,6 +77,7 @@ def load_data(file_name):
 
     return data
 
+
 def save_data(file_name, data_content):
     """
     Save data to the file
@@ -87,6 +92,7 @@ def save_data(file_name, data_content):
         # iterate through each item in the data_content list
         for data in data_content:
             file.write(','.join([str(item) for item in data]) + '\n')
+
 
 def add_product(products_data):
     """
@@ -105,15 +111,16 @@ def add_product(products_data):
 
     # displays error message if the user enters invalid data type
     except ValueError:
-        print("Wrong Value Type")    
+        print("Wrong Value Type")
 
-    # executes if no exception is triggered in the “try” block 
+        # executes if no exception is triggered in the “try” block
     else:
         products_data.append([product_id, product_name, product_count, product_description, product_price])
-        save_data("products.txt", products_data) # save data
+        save_data("products.txt", products_data)  # save data
 
         print(f"Number of product added: {len(products_data)}")
         print("Product is successfully added")
+
 
 def update_product(products_data):
     """
@@ -125,7 +132,7 @@ def update_product(products_data):
 
     print("Product ID | Product Name | Qty | Description | Price (MYR)")
     # iterate through the list of products and display each product added with details
-    for product in products_data:  
+    for product in products_data:
         item_number += 1
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
@@ -144,19 +151,20 @@ def update_product(products_data):
                 print("Wrong Value Type")
                 return
 
-            else: 
+            else:
                 save_data("products.txt", products_data)
                 print("Product updated successfully!")
                 return
-            
+
     else:
         print("Product not found")
+
 
 def add_supplier(suppliers_data):
     """
     Add a new suppliers
     """
-    
+
     print_title("ADDING SUPPLIER")
 
     try:
@@ -170,8 +178,9 @@ def add_supplier(suppliers_data):
 
     else:
         suppliers_data.append([supplier_id, name, contact])
-        save_data("suppliers.txt", suppliers_data) # save data
+        save_data("suppliers.txt", suppliers_data)  # save data
         print("Suppliers successfully added!")
+
 
 def place_order(products_data, orders_data):
     """
@@ -180,11 +189,11 @@ def place_order(products_data, orders_data):
 
     print_title("ORDERING PRODUCT")
 
-    item_number = 0 # an ordinary number (used in showing the products)
-    order_id = 0 # automatic id in order list
+    item_number = 0  # an ordinary number (used in showing the products)
+    order_id = 0  # automatic id in order list
 
     for i in orders_data:
-        order_id += 1       # set the id for the latest (count how many orders have made)
+        order_id += 1  # set the id for the latest (count how many orders have made)
 
     # TESTING IS THERE ANY DATA ?
     # if there is none, show error
@@ -193,8 +202,8 @@ def place_order(products_data, orders_data):
         return
 
     # if there is show the available products
-    print("Product Available currently: \n")
-    print("Product ID | Product Name | Qty | Description | Price (MYR)")
+    print("Product Available currently: \n\n"
+          "Product ID | Product Name | Qty | Description | Price (MYR)")
 
     for product in products_data:
         item_number += 1
@@ -206,7 +215,7 @@ def place_order(products_data, orders_data):
     for product in products_data:
         # checking if the user input a correct value
         if product[0] == order_product:
-            order_id += 1 # setting the order id
+            order_id += 1  # setting the order id
             try:
                 order_customer = input("Input the client name: ").strip()
                 order_quantity = int(input(f"How many products would you like to order (Available: {product[2]}): "))
@@ -215,33 +224,34 @@ def place_order(products_data, orders_data):
             except ValueError:
                 print("Wrong value type, please input number type")
                 return
-            
+
             else:
                 # print an error if the ordered quantity is higher than in the inventory
                 if order_quantity >= int(product[2]):
                     print("\nSorry, insufficient product")
                     return
-                
+
                 # add the data to the orders list
-                orders_data.append([f"{order_id:04d}", product[1], order_quantity, order_customer])  
+                orders_data.append([f"{order_id:04d}", product[1], order_quantity, order_customer])
                 # reduce the product
                 product[2] = int(product[2]) - order_quantity
 
                 save_data("orders.txt", orders_data)
                 save_data("products.txt", products_data)
-                
+
                 # show the orders which made
                 os.system('cls' if os.name == 'nt' else 'clear')
-                print("Details:")
-                print(f"ID = {order_id:04d} | Product = {product[1]} | Order = {order_quantity} | Client = {order_customer} \n")
-                print("Orders added successfully!")
+                print("Details:\n"
+                      f"ID = {order_id:04d} | Product = {product[1]} | Order = {order_quantity} | Client = {order_customer} \n\n"
+                      "Orders added successfully!")
 
                 return
-    
+
     # if there is no such product
     else:
         print("Product not found")
         return
+
 
 def view_inventory(products_data):
     """
@@ -258,35 +268,51 @@ def view_inventory(products_data):
         item_number += 1
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
-def generate_reports(products_data, orders_data):
+
+def generate_reports(products_data, orders_data, suppliers_data):
     """
     Generate reports
     """
 
     print_title("GENERATE REPORTS")
 
-    def low_stock_report(products_data):
+    def low_stock_report(products_info):
         print_title("LOW STOCK REPORT")
         item_number = 0
 
-        for product in products_data:
+        # Iterates through products_data and passes the if statement when the quantity is at or below 10.
+        for product in products_info:
             if int(product[2]) <= 10:
                 item_number += 1
                 print(f"{item_number}. {product[0]} stock is at {product[2]}")
 
-    def product_sales_report(products_data, orders_data):
+    def product_sales_report(products_info, orders_info):
         print_title("PRODUCT SALES REPORT")
         item_number = 0
 
-        for product in products_data:
-            for order in orders_data:
+        # Iterates through products_data and orders_data and passes the if statement when both names match.
+        for product in products_info:
+            for order in orders_info:
                 if order[1] == product[1]:
                     item_number += 1
                     revenue = int(order[2]) * float(product[4])
-                    print(f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
+                    print(
+                        f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
+
+    def view_suppliers(suppliers_info):
+        print_title("SUPPLIER LIST REPORT")
+        item_number = 0
+
+        # iterate through the list of products and display each product added with details
+        print("Supplier ID | Name | Contact")
+
+        for supplier in suppliers_info:
+            item_number += 1
+            print(f"{item_number}. {supplier[0]}, {supplier[1]}, {supplier[2]}")
 
     print("1. Low Stock\n"
-          "2. Product Sales")
+          "2. Product Sales\n"
+          "3. Supplier List")
     report_type = input("Pick the report you want: ").strip()
 
     match report_type:
@@ -294,8 +320,11 @@ def generate_reports(products_data, orders_data):
             low_stock_report(products_data)
         case "2":
             product_sales_report(products_data, orders_data)
+        case "3":
+            view_suppliers(suppliers_data)
         case _:
-            print("Invalid option, pick something within the range of 1-2")
+            print("Invalid option, pick something within the range of 1-3")
+
 
 def main():
     """
@@ -310,7 +339,7 @@ def main():
         products_data = load_data('products.txt')
         suppliers_data = load_data('suppliers.txt')
         orders_data = load_data('orders.txt')
-        
+
         print("1. Add a new product \n"
               "2. Update product details \n"
               "3. Add a new supplier \n"
@@ -321,17 +350,26 @@ def main():
         user_input = input("Enter Number: ").strip()
 
         match user_input:
-            case "1": add_product(products_data)
-            case "2": update_product(products_data)
-            case "3": add_supplier(suppliers_data)
-            case "4": place_order(products_data, orders_data)
-            case "5": view_inventory(products_data)   
-            case "6": generate_reports(products_data, orders_data)
-            case "7": break
-            case _: print("Invalid option, pick something within the range of 1-7")
+            case "1":
+                add_product(products_data)
+            case "2":
+                update_product(products_data)
+            case "3":
+                add_supplier(suppliers_data)
+            case "4":
+                place_order(products_data, orders_data)
+            case "5":
+                view_inventory(products_data)
+            case "6":
+                generate_reports(products_data, orders_data, suppliers_data)
+            case "7":
+                break
+            case _:
+                print("Invalid option, pick something within the range of 1-7")
 
         # Pause the program so the user can see logs of the function
         input("\nPress enter to continue... ")
+
 
 if __name__ == "__main__":
     main()
