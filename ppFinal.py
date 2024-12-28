@@ -1,12 +1,12 @@
 import os
 
 # clear the console and display the menu header
-def print_title(title):
+def print_title(title: str):
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"\n -- {title} -- \n")
 
 # handle data duplication 
-def duplicate_check(input_prompt, data_content):
+def duplicate_check(input_prompt: str, data_content) -> str:
     # loop will be broken when the input ID does not exist in database
     while True:
         user_input = input(f"{input_prompt}").upper()
@@ -124,7 +124,7 @@ def update_product(products_data):
                 return
 
             else: 
-                save_data("products.txt", products_data) # save data
+                save_data("products.txt", products_data)
                 print("Product updated successfully!")
                 return
             
@@ -152,19 +152,19 @@ def add_supplier(suppliers_data):
 def place_order(products_data, orders_data):
     print_title("ORDERING PRODUCT")
 
-    item_number = 0  # an ordinary number (used in showing the products)
-    order_id = 0  # automatic id in order list
+    item_number = 0 # an ordinary number (used in showing the products)
+    order_id = 0 # automatic id in order list
 
     for i in orders_data:
-        order_id += 1  # set the id for the latest (count how many orders have made)
+        order_id += 1       # set the id for the latest (count how many orders have made)
 
     # TESTING IS THERE ANY DATA ?
-    if not products_data:  # if there is no
+    # if there is none, show error
+    if not products_data:
         print("Sorry, we don't have any product right now")
         return
 
-    # if there is
-    # show the available products
+    # if there is show the available products
     print("Product Available currently: \n")
     print("Product ID | Product Name | Qty | Description | Price (MYR)")
 
@@ -176,10 +176,10 @@ def place_order(products_data, orders_data):
 
     # (for) checking if there is a product or not
     for product in products_data:
+        # checking if the user input a correct value
         if product[0] == order_product:
-            # checking if the user input a correct value
+            order_id += 1 # setting the order id
             try:
-                order_id += 1  # setting the order id
                 order_customer = input("Input the client name: ")
                 order_quantity = int(input(f"How many products would you like to order (Available: {product[2]}): "))
 
@@ -194,18 +194,19 @@ def place_order(products_data, orders_data):
                     print("\nSorry, insufficient product")
                     return
                 
-                # dd the data to the orders list
+                # add the data to the orders list
                 orders_data.append([f"{order_id:04d}", product[1], order_quantity, order_customer])  
                 # reduce the product
                 product[2] = int(product[2]) - order_quantity
 
-                save_data("orders.txt", orders_data)  # save data orders
-                save_data("products.txt", products_data)  # save data products
+                save_data("orders.txt", orders_data)
+                save_data("products.txt", products_data)
                 
                 # show the orders which made
-                print("Details: \n"
-                      f"ID = {order_id:04d} | Product = {product[1]} | Order = {order_quantity} | Client = {order_customer} \n\n"
-                      "Orders added successfully!")
+                print("\nDetails:")
+                print(f"ID = {order_id:04d} | Product = {product[1]} | Order = {order_quantity} | Client = {order_customer} \n")
+                print("Orders added successfully!")
+
                 return
     
     # if there is no such product
@@ -245,7 +246,7 @@ def generate_reports(products_data, orders_data):
             for order in orders_data:
                 if order[1] == product[1]:
                     item_number += 1
-                    revenue = (int(order[2]) * float(product[4]))
+                    revenue = int(order[2]) * float(product[4])
                     print(
                         f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
 
@@ -287,8 +288,8 @@ def main():
             case "4": place_order(products_data, orders_data)
             case "5": view_inventory(products_data)   
             case "6": generate_reports(products_data, orders_data)
-            case "7": break # terminate the program
-            case _: print("Invalid option, pick something within the range of 1-7") # if the user enters invalid option, display error message
+            case "7": break
+            case _: print("Invalid option, pick something within the range of 1-7")
 
         # Pause the program so the user can see logs of the function
         input("\nPress enter to continue... ")
