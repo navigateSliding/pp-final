@@ -296,8 +296,7 @@ def generate_reports(products_data, orders_data, suppliers_data):
                 if order[1] == product[1]:
                     item_number += 1
                     revenue = int(order[2]) * float(product[4])
-                    print(
-                        f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
+                    print(f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
 
     def view_suppliers(suppliers_info):
         print_title("SUPPLIER LIST REPORT")
@@ -316,14 +315,10 @@ def generate_reports(products_data, orders_data, suppliers_data):
     report_type = input("Pick the report you want: ").strip()
 
     match report_type:
-        case "1":
-            low_stock_report(products_data)
-        case "2":
-            product_sales_report(products_data, orders_data)
-        case "3":
-            view_suppliers(suppliers_data)
-        case _:
-            print("Invalid option, pick something within the range of 1-3")
+        case "1": low_stock_report(products_data)
+        case "2": product_sales_report(products_data, orders_data)
+        case "3": view_suppliers(suppliers_data)
+        case _: print("Invalid option, pick something within the range of 1-3")
 
 
 def main():
@@ -350,22 +345,14 @@ def main():
         user_input = input("Enter Number: ").strip()
 
         match user_input:
-            case "1":
-                add_product(products_data)
-            case "2":
-                update_product(products_data)
-            case "3":
-                add_supplier(suppliers_data)
-            case "4":
-                place_order(products_data, orders_data)
-            case "5":
-                view_inventory(products_data)
-            case "6":
-                generate_reports(products_data, orders_data, suppliers_data)
-            case "7":
-                break
-            case _:
-                print("Invalid option, pick something within the range of 1-7")
+            case "1": add_product(products_data)
+            case "2": update_product(products_data)
+            case "3": add_supplier(suppliers_data)
+            case "4": place_order(products_data, orders_data)
+            case "5": view_inventory(products_data)
+            case "6": generate_reports(products_data, orders_data, suppliers_data)
+            case "7": break
+            case _: print("Invalid option, pick something within the range of 1-7")
 
         # Pause the program so the user can see logs of the function
         input("\nPress enter to continue... ")
