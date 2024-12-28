@@ -1,12 +1,18 @@
 import os
 
-# clear the console and display the menu header
 def print_title(title: str):
+    """
+    Clear the console then display the menu header
+    """
+
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"\n -- {title} -- \n")
 
-# handle data duplication 
 def duplicate_check(input_prompt: str, data_content) -> str:
+    """
+    Check if the input data is already exist or not in the database
+    """
+
     # loop will be broken when the input ID does not exist in database
     while True:
         user_input = input(f"{input_prompt}").upper()
@@ -19,8 +25,11 @@ def duplicate_check(input_prompt: str, data_content) -> str:
         else:
             return user_input
 
-# display expected headers for each file type
 def format_file_header(file_name):
+    """
+    Display expected headers for each file type
+    """
+
     headers = {
         "products.txt": "Product ID | Product Name | Qty | Description | Price (MYR)",
         "suppliers.txt": "Supplier ID | Name | Contact",
@@ -41,8 +50,11 @@ def format_file_header(file_name):
         file.seek(0)
         file.write(headers[file_name] + "\n" + original_content)
 
-# load data from the file
 def load_data(file_name):
+    """
+    Load data from the file
+    """
+
     data = []
 
     # check the file exists
@@ -61,8 +73,11 @@ def load_data(file_name):
 
     return data
 
-# save data to the file
 def save_data(file_name, data_content):
+    """
+    Save data to the file
+    """
+
     # check the file header is correct
     file_header = format_file_header(file_name)
 
@@ -73,8 +88,11 @@ def save_data(file_name, data_content):
         for data in data_content:
             file.write(','.join([str(item) for item in data]) + '\n')
 
-# add a new product
 def add_product(products_data):
+    """
+    Add a new product
+    """
+
     print_title("ADDING PRODUCT")
 
     try:
@@ -97,8 +115,11 @@ def add_product(products_data):
         print(f"Number of product added: {len(products_data)}")
         print("Product is successfully added")
 
-# update product details
 def update_product(products_data):
+    """
+    Update product details
+    """
+
     print_title("UPDATE PRODUCT")
     item_number = 0
 
@@ -116,7 +137,7 @@ def update_product(products_data):
                 product[1] = input(f"Enter new Name (current: {product[1]}): ").strip()
                 product[2] = int(input(f"Enter new Qty (current: {product[2]}): "))
                 product[3] = input(f"Enter new Description (current: {product[3]}): ").strip()
-                product[4] = float(input(f"Enter new price (current: {product[4]}): ")).strip()
+                product[4] = float(input(f"Enter new price (current: {product[4]}): "))
 
             # display error message if user enters invalid data type
             except ValueError:
@@ -131,8 +152,11 @@ def update_product(products_data):
     else:
         print("Product not found")
 
-# add a new suppliers
 def add_supplier(suppliers_data):
+    """
+    Add a new suppliers
+    """
+    
     print_title("ADDING SUPPLIER")
 
     try:
@@ -150,6 +174,10 @@ def add_supplier(suppliers_data):
         print("Suppliers successfully added!")
 
 def place_order(products_data, orders_data):
+    """
+    Placing order
+    """
+
     print_title("ORDERING PRODUCT")
 
     item_number = 0 # an ordinary number (used in showing the products)
@@ -203,7 +231,8 @@ def place_order(products_data, orders_data):
                 save_data("products.txt", products_data)
                 
                 # show the orders which made
-                print("\nDetails:")
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print("Details:")
                 print(f"ID = {order_id:04d} | Product = {product[1]} | Order = {order_quantity} | Client = {order_customer} \n")
                 print("Orders added successfully!")
 
@@ -214,8 +243,11 @@ def place_order(products_data, orders_data):
         print("Product not found")
         return
 
-# view inventory
 def view_inventory(products_data):
+    """
+    View inventory
+    """
+
     print_title("VIEW INVENTORY")
     item_number = 0
 
@@ -227,6 +259,10 @@ def view_inventory(products_data):
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
 def generate_reports(products_data, orders_data):
+    """
+    Generate reports
+    """
+
     print_title("GENERATE REPORTS")
 
     def low_stock_report(products_data):
@@ -262,6 +298,10 @@ def generate_reports(products_data, orders_data):
             print("Invalid option, pick something within the range of 1-2")
 
 def main():
+    """
+    Main menu option
+    """
+
     # start an infinite loop until the user exits
     while True:
         print_title("Main Menu")
