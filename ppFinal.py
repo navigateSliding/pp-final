@@ -79,10 +79,10 @@ def add_product(products_data):
 
     try:
         # prompts the user to input the product details
-        product_id = duplicate_check("Enter your product id: ", products_data)
-        product_name = input("Enter product name: ")
+        product_id = duplicate_check("Enter your product id: ", products_data).strip()
+        product_name = input("Enter product name: ").strip()
         product_count = int(input("Enter how many product: "))
-        product_description = input("Enter description of product: ")
+        product_description = input("Enter description of product: ").strip()
         product_price = float(input("Enter product price (in MYR): "))
 
     # displays error message if the user enters invalid data type
@@ -109,14 +109,14 @@ def update_product(products_data):
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
     # Check if the ID exist or not
-    product_id = input("\nEnter the product ID : ").upper()
+    product_id = input("\nEnter the product ID : ").strip().upper()
     for product in products_data:
         if product[0] == product_id:
             try:
-                product[1] = input(f"Enter new Name (current: {product[1]}): ")
+                product[1] = input(f"Enter new Name (current: {product[1]}): ").strip()
                 product[2] = int(input(f"Enter new Qty (current: {product[2]}): "))
-                product[3] = input(f"Enter new Description (current: {product[3]}): ")
-                product[4] = float(input(f"Enter new price (current: {product[4]}): "))
+                product[3] = input(f"Enter new Description (current: {product[3]}): ").strip()
+                product[4] = float(input(f"Enter new price (current: {product[4]}): ")).strip()
 
             # display error message if user enters invalid data type
             except ValueError:
@@ -136,8 +136,8 @@ def add_supplier(suppliers_data):
     print_title("ADDING SUPPLIER")
 
     try:
-        supplier_id = duplicate_check("Enter supplier ID: ", suppliers_data)
-        name = input("Enter supplier name: ")
+        supplier_id = duplicate_check("Enter supplier ID: ", suppliers_data).strip()
+        name = input("Enter supplier name: ").strip()
         contact = int(input("Enter supplier contact number: "))
 
     # display error message if user enters invalid data type
@@ -172,7 +172,7 @@ def place_order(products_data, orders_data):
         item_number += 1
         print(f"{item_number}. {product[0]}, {product[1]}, {product[2]}, {product[3]}, {product[4]}")
 
-    order_product = input("\nSelect the product (ID): ").upper()
+    order_product = input("\nSelect the product (ID): ").strip().upper()
 
     # (for) checking if there is a product or not
     for product in products_data:
@@ -180,7 +180,7 @@ def place_order(products_data, orders_data):
         if product[0] == order_product:
             order_id += 1 # setting the order id
             try:
-                order_customer = input("Input the client name: ")
+                order_customer = input("Input the client name: ").strip()
                 order_quantity = int(input(f"How many products would you like to order (Available: {product[2]}): "))
 
             # if the user input the wrong value type
@@ -247,12 +247,11 @@ def generate_reports(products_data, orders_data):
                 if order[1] == product[1]:
                     item_number += 1
                     revenue = int(order[2]) * float(product[4])
-                    print(
-                        f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
+                    print(f"{item_number}. {product[1]}: {order[2]} unit{'s'[:int(order[2]) ^ 1]} sold for {revenue} MYR")
 
     print("1. Low Stock\n"
           "2. Product Sales")
-    report_type = input("Pick the report you want: ")
+    report_type = input("Pick the report you want: ").strip()
 
     match report_type:
         case "1":
@@ -279,7 +278,7 @@ def main():
               "5. View inventory \n"
               "6. Generate reports \n"
               "7. Exit \n")
-        user_input = input("Enter Number: ")
+        user_input = input("Enter Number: ").strip()
 
         match user_input:
             case "1": add_product(products_data)
