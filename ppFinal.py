@@ -12,7 +12,7 @@ def print_title(title: str):
 
 def duplicate_check(input_prompt: str, data_content) -> str:
     """
-    Check if the input data is already exist or not in the database
+    Check if the input data already exist or not in the database
     """
 
     # loop will be broken when the input ID does not exist in database
@@ -30,9 +30,11 @@ def duplicate_check(input_prompt: str, data_content) -> str:
 
 def format_file_header(file_name):
     """
-    Display expected headers for each file type
+    Return the header of the file if the file have it
+    Append a predefined header if the file does not contain any
     """
 
+    # A list of predefined header
     headers = {
         "products.txt": "Product ID | Product Name | Qty | Description | Price (MYR)",
         "suppliers.txt": "Supplier ID | Name | Contact",
@@ -162,7 +164,7 @@ def update_product(products_data):
 
 def add_supplier(suppliers_data):
     """
-    Add a new suppliers
+    Add a new supplier
     """
 
     print_title("ADDING SUPPLIER")
@@ -184,7 +186,8 @@ def add_supplier(suppliers_data):
 
 def place_order(products_data, orders_data):
     """
-    Placing order
+    Place an order from the products.txt
+    Ordering a product will reduce the quantity from products.txt
     """
 
     print_title("ORDERING PRODUCT")
@@ -255,7 +258,7 @@ def place_order(products_data, orders_data):
 
 def view_inventory(products_data):
     """
-    View inventory
+    Print out the content of products.txt file with additional format
     """
 
     print_title("VIEW INVENTORY")
@@ -271,7 +274,7 @@ def view_inventory(products_data):
 
 def generate_reports(products_data, orders_data, suppliers_data):
     """
-    Generate reports
+    Genereate a report for low stock, product sales, and view suppliers
     """
 
     print_title("GENERATE REPORTS")
@@ -323,7 +326,7 @@ def generate_reports(products_data, orders_data, suppliers_data):
 
 def main():
     """
-    Main menu option
+    Main menu option screen
     """
 
     # start an infinite loop until the user exits
